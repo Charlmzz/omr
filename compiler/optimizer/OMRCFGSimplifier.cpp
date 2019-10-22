@@ -414,7 +414,8 @@ bool OMR::CFGSimplifier::simplifyCondStoreSequence(bool needToDuplicateTree)
 
    if (treeCursor->getNode()->getOpCodeValue() != TR::BBEnd || count < 2)
       return false;
-
+   if (treeCursor->getNode()->getDataType() == TR::Address)
+      return false;
    if (!performTransformation(comp(), "%sReplace conditional stores in block_%d with stores of appropriate ternary at nodes\n", OPT_DETAILS, toCheck->getNumber()))
       return false;
 
@@ -586,6 +587,9 @@ bool OMR::CFGSimplifier::simplifySimpleStore(bool needToDuplicateTree)
 
    if (trace())
       traceMsg(comp(), "   StoreNode symRef checks out\n");
+   
+   if (treeCursor->getNode()->getDataType() == TR::Address)
+      return false;
 
    if (!performTransformation(comp(), "%sReplace conditional store with store of an appropriate ternary at node [%p]\n", OPT_DETAILS, compareNode))
       return false;
